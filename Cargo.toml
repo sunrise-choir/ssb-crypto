@@ -1,0 +1,10 @@
+[package]
+name = "ssb-crypto"
+version = "0.1.0"
+authors = ["sean billig <sean.billig@gmail.com>"]
+edition = "2018"
+license = "AGPL-3.0"
+
+[dependencies]
+libsodium-sys = "0.2"
+sodiumoxide = "0.2"
