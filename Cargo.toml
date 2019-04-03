@@ -4,6 +4,11 @@ version = "0.1.0"
 authors = ["sean billig <sean.billig@gmail.com>"]
 edition = "2018"
 license = "AGPL-3.0"
+description = "Crypto primitives used by Secure Scuttlebutt"
+repository = "https://github.com/sunrise-choir/ssb-crypto"
+documentation = "https://docs.rs/ssb-crypto/"
+readme = "README.md"
+keywords = ["ssb", "scuttlebutt", "crypto"]
 
 [dependencies]
 libsodium-sys = "0.2"

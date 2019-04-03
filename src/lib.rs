@@ -60,7 +60,7 @@ impl NonceGen {
 
     /// #Examples
     /// ```rust
-    /// use shs_core::NonceGen;
+    /// use ssb_crypto::NonceGen;
     /// use sodiumoxide::crypto::secretbox::Nonce;
     ///
     /// let nonce_bytes = [0, 0, 0, 0, 0, 0, 0, 0,
