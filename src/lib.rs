@@ -1,7 +1,7 @@
 use core::mem::size_of;
+use std::sync::Once;
 
 extern crate sodiumoxide;
-
 use sodiumoxide::crypto::{auth, sign};
 
 pub use sign::{PublicKey, SecretKey, Signature, sign_detached, verify_detached};
@@ -10,6 +10,14 @@ pub use auth::{Tag as AuthTag};
 
 pub mod hash;
 pub mod handshake;
+pub mod utils;
+
+static INIT: Once = Once::new();
+pub fn init() {
+    INIT.call_once(|| {
+        sodiumoxide::init().expect("Failed to initialize libsodium.");
+    });
+}
 
 pub fn generate_longterm_keypair() -> (PublicKey, SecretKey) {
     sign::gen_keypair()
