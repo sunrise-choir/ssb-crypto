@@ -24,7 +24,7 @@ pub fn generate_longterm_keypair() -> (PublicKey, SecretKey) {
 }
 
 /// 32-byte network key, known by client and server. Usually `NetworkKey::SSB_MAIN_NET`
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct NetworkKey(auth::Key);
 impl NetworkKey {
     pub const SSB_MAIN_NET: NetworkKey = NetworkKey(auth::Key([
@@ -32,6 +32,12 @@ impl NetworkKey {
         0x5d, 0xac, 0x1b, 0x08, 0x42, 0x0c, 0xea, 0xac, 0x23, 0x08, 0x39, 0xb7, 0x55, 0x84, 0x5a,
         0x9f, 0xfb,
     ]));
+
+    pub fn random() -> NetworkKey {
+        let mut buf = [0u8; NetworkKey::size()];
+        utils::randombytes_into(&mut buf);
+        NetworkKey::from_slice(&buf).unwrap()
+    }
 
     pub fn as_slice(&self) -> &[u8] {
         &self.0[..]
@@ -99,5 +105,20 @@ impl NonceGen {
             }
         }
         n
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn networkkey_random() {
+        let a = NetworkKey::random();
+        let b = NetworkKey::random();
+
+        assert_ne!(a, b);
+        assert_ne!(a, NetworkKey::from_slice(&[0u8; NetworkKey::size()]).unwrap());
     }
 }
