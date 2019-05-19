@@ -111,7 +111,13 @@ impl NonceGen {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use core::mem::size_of;
+    use super::{
+        generate_longterm_keypair,
+        handshake::*,
+        NetworkKey,
+        PublicKey,
+    };
 
     #[test]
     fn networkkey_random() {
@@ -120,5 +126,26 @@ mod tests {
 
         assert_ne!(a, b);
         assert_ne!(a, NetworkKey::from_slice(&[0u8; NetworkKey::size()]).unwrap());
+    }
+
+    #[test]
+    fn shared_secret_with_zero() {
+        let (c_eph_pk, _) = generate_ephemeral_keypair();
+        let (c_pk, _) = generate_longterm_keypair();
+
+        let (_, s_eph_sk) = generate_ephemeral_keypair();
+        let (_, s_sk) = generate_longterm_keypair();
+
+
+        assert!(derive_shared_secret(&s_eph_sk, &c_eph_pk).is_some());
+        let zero_eph_pk = EphPublicKey::from_slice(&[0; size_of::<EphPublicKey>()]).unwrap();
+        assert!(derive_shared_secret(&s_eph_sk, &zero_eph_pk).is_none());
+
+        assert!(derive_shared_secret_pk(&s_eph_sk, &c_pk).is_some());
+        let zero_pk = PublicKey::from_slice(&[0; size_of::<PublicKey>()]).unwrap();
+        assert!(derive_shared_secret_pk(&s_eph_sk, &zero_pk).is_none());
+
+        assert!(derive_shared_secret_sk(&s_sk, &c_eph_pk).is_some());
+        assert!(derive_shared_secret_sk(&s_sk, &zero_eph_pk).is_none());
     }
 }

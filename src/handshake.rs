@@ -11,9 +11,12 @@ pub use box_::{
     SecretKey as EphSecretKey,
 };
 
-pub struct EphKeyPair {
-    pub public: EphPublicKey,
-    pub secret: EphSecretKey,
+pub struct HandshakeKeys {
+    pub read_key: secretbox::Key,
+    pub read_noncegen: NonceGen,
+
+    pub write_key: secretbox::Key,
+    pub write_noncegen: NonceGen,
 }
 
 pub fn generate_ephemeral_keypair() -> (EphPublicKey, EphSecretKey) {
