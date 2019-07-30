@@ -4,7 +4,7 @@ use std::sync::Once;
 extern crate sodiumoxide;
 use sodiumoxide::crypto::{auth, sign};
 
-pub use sign::{PublicKey, SecretKey, Signature, sign_detached, verify_detached};
+pub use sign::{PublicKey, PUBLICKEYBYTES, SecretKey, SECRETKEYBYTES, Signature, SIGNATUREBYTES, sign_detached, verify_detached};
 pub use sodiumoxide::crypto::secretbox;
 pub use auth::{Tag as AuthTag};
 
