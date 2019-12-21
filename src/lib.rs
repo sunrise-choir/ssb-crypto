@@ -4,12 +4,15 @@ use std::sync::Once;
 extern crate sodiumoxide;
 use sodiumoxide::crypto::{auth, sign};
 
-pub use sign::{PublicKey, PUBLICKEYBYTES, SecretKey, SECRETKEYBYTES, Signature, SIGNATUREBYTES, sign_detached, verify_detached};
+pub use auth::Tag as AuthTag;
+pub use sign::{
+    sign_detached, verify_detached, PublicKey, SecretKey, Signature, PUBLICKEYBYTES,
+    SECRETKEYBYTES, SIGNATUREBYTES,
+};
 pub use sodiumoxide::crypto::secretbox;
-pub use auth::{Tag as AuthTag};
 
-pub mod hash;
 pub mod handshake;
+pub mod hash;
 pub mod utils;
 
 static INIT: Once = Once::new();
@@ -89,13 +92,11 @@ impl NonceGen {
     ///                      0, 0, 0, 0, 0, 1, 0, 0]);
     /// ```
     pub fn with_starting_nonce(nonce: secretbox::Nonce) -> NonceGen {
-        NonceGen {
-            next_nonce: nonce
-        }
+        NonceGen { next_nonce: nonce }
     }
 
     pub fn next(&mut self) -> secretbox::Nonce {
-        let n = self.next_nonce.clone();
+        let n = self.next_nonce;
 
         // Increment the nonce as a big-endian u24
         for byte in self.next_nonce.0.iter_mut().rev() {
@@ -108,16 +109,10 @@ impl NonceGen {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
+    use super::{generate_longterm_keypair, handshake::*, NetworkKey, PublicKey};
     use core::mem::size_of;
-    use super::{
-        generate_longterm_keypair,
-        handshake::*,
-        NetworkKey,
-        PublicKey,
-    };
 
     #[test]
     fn networkkey_random() {
@@ -125,7 +120,10 @@ mod tests {
         let b = NetworkKey::random();
 
         assert_ne!(a, b);
-        assert_ne!(a, NetworkKey::from_slice(&[0u8; NetworkKey::size()]).unwrap());
+        assert_ne!(
+            a,
+            NetworkKey::from_slice(&[0u8; NetworkKey::size()]).unwrap()
+        );
     }
 
     #[test]
@@ -135,7 +133,6 @@ mod tests {
 
         let (_, s_eph_sk) = generate_ephemeral_keypair();
         let (_, s_sk) = generate_longterm_keypair();
-
 
         assert!(derive_shared_secret(&s_eph_sk, &c_eph_pk).is_some());
         let zero_eph_pk = EphPublicKey::from_slice(&[0; size_of::<EphPublicKey>()]).unwrap();

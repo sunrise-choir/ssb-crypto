@@ -1,15 +1,11 @@
-
 use libsodium_sys::{crypto_sign_ed25519_pk_to_curve25519, crypto_sign_ed25519_sk_to_curve25519};
+pub use scalarmult::GroupElement as SharedSecret;
 use sodiumoxide::crypto::scalarmult::{self, scalarmult, Scalar};
-pub use scalarmult::{GroupElement as SharedSecret};
 
 use crate::*;
 
+pub use box_::{PublicKey as EphPublicKey, SecretKey as EphSecretKey};
 use sodiumoxide::crypto::box_;
-pub use box_::{
-    PublicKey as EphPublicKey,
-    SecretKey as EphSecretKey,
-};
 
 pub struct HandshakeKeys {
     pub read_key: secretbox::Key,
@@ -33,16 +29,12 @@ pub fn derive_shared_secret(
     scalarmult(&n, &p).ok()
 }
 
-pub fn derive_shared_secret_pk(sk: &EphSecretKey, pk: &PublicKey)
-                               -> Option<SharedSecret> {
-    pk_to_curve(&pk)
-        .and_then(|c| derive_shared_secret(&sk, &c))
+pub fn derive_shared_secret_pk(sk: &EphSecretKey, pk: &PublicKey) -> Option<SharedSecret> {
+    pk_to_curve(&pk).and_then(|c| derive_shared_secret(&sk, &c))
 }
 
-pub fn derive_shared_secret_sk(sk: &SecretKey, pk: &EphPublicKey)
-                               -> Option<SharedSecret> {
-    sk_to_curve(&sk)
-        .and_then(|c| derive_shared_secret(&c, &pk))
+pub fn derive_shared_secret_sk(sk: &SecretKey, pk: &EphPublicKey) -> Option<SharedSecret> {
+    sk_to_curve(&sk).and_then(|c| derive_shared_secret(&c, &pk))
 }
 
 fn pk_to_curve(k: &PublicKey) -> Option<EphPublicKey> {
