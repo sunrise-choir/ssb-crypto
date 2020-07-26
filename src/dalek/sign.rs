@@ -1,4 +1,5 @@
 use crate::{Keypair, PublicKey, SecretKey, Signature};
+use dalek::{Signer, Verifier};
 use ed25519_dalek as dalek;
 
 impl Into<dalek::Keypair> for &Keypair {
@@ -40,10 +41,7 @@ pub fn sign(k: &Keypair, b: &[u8]) -> Signature {
 }
 
 pub fn verify(k: &PublicKey, s: &Signature, b: &[u8]) -> bool {
-    if let Ok(sig) = dalek::Signature::from_bytes(&s.0) {
-        let pk = dalek::PublicKey::from_bytes(&k.0).unwrap();
-        pk.verify(b, &sig).is_ok()
-    } else {
-        false
-    }
+    let sig = dalek::Signature::new(s.0);
+    let pk = dalek::PublicKey::from_bytes(&k.0).unwrap();
+    pk.verify(b, &sig).is_ok()
 }
