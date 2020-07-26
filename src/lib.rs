@@ -34,6 +34,9 @@
 //! use ssb-crypto, some preferring `sodium`, and others preferring `dalek`.
 //! To force the methods to use the sodium implementation, enable the `force_sodium` feature.
 //!
+//! WARNING: if you use the sodium implementation, you must call ssb_crypto::sodium::init().
+//! If you don't, libsodium's random-number generation and key-generation functions are not thread-safe.
+//!
 //! ```toml
 //! [dependencies.ssb-crypto]
 //! version = "0.2"
@@ -61,8 +64,6 @@
 #[cfg(test)]
 #[macro_use]
 extern crate std;
-extern crate zerocopy;
-extern crate zeroize;
 
 #[cfg(feature = "b64")]
 mod b64;

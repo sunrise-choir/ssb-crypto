@@ -1,5 +1,3 @@
-use base64;
-
 pub(crate) fn decode(mut s: &str, mut buf: &mut [u8], suffix: Option<&str>) -> bool {
     if let Some(suffix) = suffix {
         if let Some(idx) = s.rfind(suffix) {

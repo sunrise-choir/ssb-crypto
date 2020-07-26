@@ -2,5 +2,7 @@
 
 [![Documentation](https://docs.rs/ssb-crypto/badge.svg)](https://docs.rs/ssb-crypto)
 
-This currently just re-exports the parts of the `sodiumoxide` crate that
-are needed by SSB, and defines a couple custom structs.
+This crate provides the cryptographic functionality needed to implement
+the Secure Scuttlebutt networking protocols and content signing and encryption.
+
+See the [documentation](https://docs.rs/ssb-crypto) for more information.
