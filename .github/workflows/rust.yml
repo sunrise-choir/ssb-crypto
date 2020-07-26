@@ -20,3 +20,5 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose --features sodium_module
+    - name: Run tests w/force_sodium
+      run: cargo test --verbose --features force_sodium

@@ -118,9 +118,9 @@ mod tests {
     all(feature = "dalek_module", feature = "sodium_module")
 ))]
 mod dalek_vs_sodium {
-    #[cfg(feature = "sodium")]
+    #[cfg(any(feature = "force_sodium", not(feature = "dalek")))]
     use crate::dalek as other;
-    #[cfg(feature = "dalek")]
+    #[cfg(all(feature = "dalek", not(feature = "force_sodium")))]
     use crate::sodium as other;
 
     use crate::dalek;
