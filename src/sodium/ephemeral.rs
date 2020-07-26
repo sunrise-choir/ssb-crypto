@@ -1,32 +1,23 @@
+use crate::{ephemeral::*, PublicKey, SecretKey};
+
 use libsodium_sys::{crypto_sign_ed25519_pk_to_curve25519, crypto_sign_ed25519_sk_to_curve25519};
-pub use scalarmult::GroupElement as SharedSecret;
-use sodiumoxide::crypto::scalarmult::{self, scalarmult, Scalar};
+use sodiumoxide::crypto::scalarmult::{scalarmult, GroupElement, Scalar};
 
-use crate::*;
-
-pub use box_::{PublicKey as EphPublicKey, SecretKey as EphSecretKey};
+// pub use box_::{PublicKey as EphPublicKey, SecretKey as EphSecretKey};
 use sodiumoxide::crypto::box_;
 
-pub struct HandshakeKeys {
-    pub read_key: secretbox::Key,
-    pub read_noncegen: NonceGen,
-
-    pub write_key: secretbox::Key,
-    pub write_noncegen: NonceGen,
-}
-
 pub fn generate_ephemeral_keypair() -> (EphPublicKey, EphSecretKey) {
-    box_::gen_keypair()
+    let (pk, sk) = box_::gen_keypair();
+    (EphPublicKey(pk.0), EphSecretKey(sk.0))
 }
 
 pub fn derive_shared_secret(
     our_sec: &EphSecretKey,
     their_pub: &EphPublicKey,
 ) -> Option<SharedSecret> {
-    // Benchmarks suggest that these "copies" get optimized away.
-    let n = Scalar::from_slice(&our_sec[..])?;
-    let p = SharedSecret::from_slice(&their_pub[..])?;
-    scalarmult(&n, &p).ok()
+    let n = Scalar(our_sec.0);
+    let p = GroupElement(their_pub.0);
+    scalarmult(&n, &p).ok().map(|s| SharedSecret(s.0))
 }
 
 pub fn derive_shared_secret_pk(sk: &EphSecretKey, pk: &PublicKey) -> Option<SharedSecret> {
@@ -38,24 +29,24 @@ pub fn derive_shared_secret_sk(sk: &SecretKey, pk: &EphPublicKey) -> Option<Shar
 }
 
 fn pk_to_curve(k: &PublicKey) -> Option<EphPublicKey> {
-    let mut buf = [0; size_of::<EphPublicKey>()];
+    let mut buf = [0; EphPublicKey::SIZE];
 
     let ok = unsafe { crypto_sign_ed25519_pk_to_curve25519(buf.as_mut_ptr(), k.0.as_ptr()) == 0 };
 
     if ok {
-        EphPublicKey::from_slice(&buf)
+        Some(EphPublicKey(buf))
     } else {
         None
     }
 }
 
 fn sk_to_curve(k: &SecretKey) -> Option<EphSecretKey> {
-    let mut buf = [0; size_of::<EphSecretKey>()];
+    let mut buf = [0; EphSecretKey::SIZE];
 
     let ok = unsafe { crypto_sign_ed25519_sk_to_curve25519(buf.as_mut_ptr(), k.0.as_ptr()) == 0 };
 
     if ok {
-        EphSecretKey::from_slice(&buf)
+        Some(EphSecretKey(buf))
     } else {
         None
     }
