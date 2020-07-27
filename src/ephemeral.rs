@@ -14,6 +14,7 @@ use crate::dalek::ephemeral as eph;
 ))]
 use crate::sodium::ephemeral as eph;
 
+#[cfg(any(feature = "sodium", feature = "dalek"))]
 pub use eph::{
     derive_shared_secret, derive_shared_secret_pk, derive_shared_secret_sk,
     generate_ephemeral_keypair,

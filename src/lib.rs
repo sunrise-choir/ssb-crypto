@@ -88,7 +88,9 @@ pub mod ephemeral;
 pub mod secretbox;
 pub mod utils;
 
-#[cfg(test)]
+pub use zerocopy::{AsBytes, FromBytes};
+
+#[cfg(all(test, any(feature = "sodium", feature = "dalek")))]
 mod tests {
     use crate::{ephemeral::*, Keypair, PublicKey};
 

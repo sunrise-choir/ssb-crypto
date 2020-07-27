@@ -15,13 +15,14 @@ use crate::sodium::sign;
 /// A public/secret long-term key pair.
 ///
 /// This is an [Ed25519](https://en.wikipedia.org/wiki/EdDSA) key pair.
-#[derive(Clone)]
+#[derive(Clone, AsBytes, FromBytes)]
+#[repr(C)]
 pub struct Keypair {
-    /// The public half of the key pair. Feel free to share.
-    pub public: PublicKey,
-
     /// The secret half of the key pair. Keep private.
     pub secret: SecretKey,
+
+    /// The public half of the key pair. Feel free to share.
+    pub public: PublicKey,
 }
 
 impl Keypair {
@@ -49,10 +50,11 @@ impl Keypair {
     /// # Example
     /// ```rust
     /// let s = "R6DKoOCt1Cj/IB2/ocvj2Eyp8AgmFdoJ9hH2TO4Tl8Yfapd5Lmw4pSpoY0WBEnqpHjz6UB4/QL2Wr0hWVAyi1w==.ed25519";
-    /// if let Some(keys) = ssb_crypto::Keypair::from_base64(s) {
-    ///     let msg = "hello".as_bytes();
-    ///     let sig = keys.sign(msg);
-    ///     assert!(keys.public.verify(&sig, msg));
+    /// if let Some(keypair) = ssb_crypto::Keypair::from_base64(s) {
+    ///   // let auth = keypair.sign("hello".to_bytes());
+    ///   // ...
+    /// } else {
+    ///     panic!()
     /// }
     /// ```
     #[cfg(feature = "b64")]
@@ -88,8 +90,9 @@ impl Keypair {
 /// The underlying memory is zeroed on drop.
 ///
 /// [`Keypair`]: ./struct.Keypair.html
-#[derive(Clone, Zeroize)]
+#[derive(AsBytes, FromBytes, Clone, Zeroize)]
 #[zeroize(drop)]
+#[repr(C)]
 pub struct SecretKey(pub [u8; 32]);
 impl SecretKey {
     /// Size of a secret key, in bytes (32).

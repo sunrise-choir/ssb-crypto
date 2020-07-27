@@ -18,7 +18,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       run: cargo build --verbose
-    - name: Run tests
+    - name: test
       run: cargo test --verbose --features sodium_module
-    - name: Run tests w/force_sodium
+    - name: test w/force_sodium
       run: cargo test --verbose --features force_sodium
+    - name: test, no default features, b64
+      run: cargo test --verbose --no-default-features --features b64

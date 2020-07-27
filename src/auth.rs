@@ -18,15 +18,6 @@ use crate::sodium::auth;
 ///
 /// This is an [HMAC](https://en.wikipedia.org/wiki/HMAC) key;
 /// specifically HMAC-SHA-512-256.
-///
-/// # Examples
-/// ```
-/// use ssb_crypto::{NetworkKey, ephemeral::*};
-/// let (pk, sk)  = generate_ephemeral_keypair();
-/// let netkey = NetworkKey::SSB_MAIN_NET;
-/// let auth = netkey.authenticate(&pk.0);
-/// assert!(netkey.verify(&auth, &pk.0));
-/// ```
 #[derive(AsBytes, Clone, Debug, PartialEq, Zeroize)]
 #[repr(C)]
 #[zeroize(drop)]
@@ -58,6 +49,15 @@ impl NetworkKey {
 #[cfg(any(feature = "sodium", feature = "dalek"))]
 impl NetworkKey {
     /// Generate an authentication code for the given byte slice.
+    ///
+    /// # Examples
+    /// ```
+    /// use ssb_crypto::{NetworkKey, ephemeral::*};
+    /// let (pk, sk) = generate_ephemeral_keypair();
+    /// let netkey = NetworkKey::SSB_MAIN_NET;
+    /// let auth = netkey.authenticate(&pk.0);
+    /// assert!(netkey.verify(&auth, &pk.0));
+    /// ```
     pub fn authenticate(&self, b: &[u8]) -> NetworkAuth {
         auth::authenticate(self, b)
     }
