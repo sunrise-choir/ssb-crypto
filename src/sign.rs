@@ -102,7 +102,7 @@ impl SecretKey {
 /// The public half of a [`Keypair`].
 ///
 /// [`Keypair`]: ./struct.Keypair.html
-#[derive(AsBytes, FromBytes, Copy, Clone, PartialEq, Debug)]
+#[derive(AsBytes, FromBytes, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 #[repr(C)]
 pub struct PublicKey(pub [u8; 32]);
 impl PublicKey {

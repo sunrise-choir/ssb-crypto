@@ -22,6 +22,7 @@ pub(crate) fn decode(mut s: &str, mut buf: &mut [u8], suffix: Option<&str>) -> b
 }
 
 // poor-man's ceil, because f64::ceil() isn't available on no_std
+#[allow(clippy::float_cmp)]
 fn ceil(x: f64) -> usize {
     assert!(x >= 0.0);
     let u = x as usize;
