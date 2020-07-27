@@ -9,6 +9,7 @@ repository = "https://github.com/sunrise-choir/ssb-crypto"
 documentation = "https://docs.rs/ssb-crypto/"
 readme = "README.md"
 keywords = ["ssb", "scuttlebutt", "crypto"]
+include = ["src/**/*", "LICENSE", "README.md"]
 
 [dependencies]
 zerocopy = "0.3.0"
