@@ -1,6 +1,8 @@
 use crate::utils::as_array_32;
 use core::fmt;
 use core::mem::size_of;
+#[cfg(feature = "dalek")]
+use rand::{CryptoRng, RngCore};
 use zerocopy::{AsBytes, FromBytes};
 use zeroize::Zeroize;
 
@@ -68,9 +70,19 @@ impl Keypair {
     }
 
     /// Generate a new random keypair.
-    #[cfg(any(feature = "sodium", feature = "dalek"))]
+    #[cfg(any(feature = "sodium", all(feature = "dalek", feature = "getrandom")))]
     pub fn generate() -> Keypair {
         sign::generate_keypair()
+    }
+
+    /// Generate a new random keypair using the given cryptographically-secure
+    /// random number generator.
+    #[cfg(feature = "dalek")]
+    pub fn generate_with_rng<R>(r: &mut R) -> Keypair
+    where
+        R: CryptoRng + RngCore,
+    {
+        crate::dalek::sign::generate_keypair_with_rng(r)
     }
 
     /// Generate a signature for a given byte slice.

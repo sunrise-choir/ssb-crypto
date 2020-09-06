@@ -1,6 +1,7 @@
 use crate::{Keypair, PublicKey, SecretKey, Signature};
 use dalek::{Signer, Verifier};
 use ed25519_dalek as dalek;
+use rand::{CryptoRng, RngCore};
 
 impl Into<dalek::Keypair> for &Keypair {
     fn into(self) -> dalek::Keypair {
@@ -20,9 +21,16 @@ impl Into<Keypair> for dalek::Keypair {
     }
 }
 
+#[cfg(feature = "getrandom")]
 pub fn generate_keypair() -> Keypair {
-    let mut rng = rand::rngs::OsRng {};
-    dalek::Keypair::generate(&mut rng).into()
+    dalek::Keypair::generate(&mut rand::rngs::OsRng {}).into()
+}
+
+pub fn generate_keypair_with_rng<R>(r: &mut R) -> Keypair
+where
+    R: CryptoRng + RngCore,
+{
+    dalek::Keypair::generate(r).into()
 }
 
 pub fn keypair_from_seed(seed: &[u8]) -> Option<Keypair> {

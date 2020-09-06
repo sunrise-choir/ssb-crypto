@@ -24,6 +24,18 @@
 //! [`PublicKey::verify`]. If neither `dalek` nor `sodium` features are enabled,
 //! these methods won't be available.
 //!
+//! ### `rand`
+//! On by default. Provide functions to generate keys and nonces with user-specified
+//! cryptographically-secure random number generator (Eg. [`Nonce::generate_with_rng`]).
+//! These functions can be used in `no_std` environments that aren't supported by `getrandom`.
+//! Enabled if `dalek` is enabled.
+//!
+//! ### `getrandom`
+//! On by default. Provide functions to generate keys and nonces using the OS-provided
+//! cryptographically-secure random number generator (via the [getrandom] crate).
+//! For environments that aren't supported by getrandom, disable this feature and
+//! use the `generate_with_rng()` functions instead.
+//!
 //! ### `b64`
 //! On by default. Enable `from_base64` functions for [`Keypair`], [`PublicKey`], [`Signature`], and [`Hash`].
 //!
@@ -52,12 +64,26 @@
 //! Note that the sodium and dalek modules are hidden from the docs; you'll have
 //! to look at the code if you want to use them directly.
 //!
+//! [getrandom]: https://crates.io/crates/getrandom
 //! [libsodium]: https://libsodium.gitbook.io
 //! [sodiumoxide]: https://crates.io/crates/sodiumoxide
 //! [RustCrypto]: https://github.com/RustCrypto/
 //! [dalek]: https://dalek.rs
+//! [`Hash`]: ./struct.Hash.html
+//! [`Keypair`]: ./struct.Keypair.html
 //! [`Keypair::sign`]: ./struct.Keypair.html#method.sign
+//! [`PublicKey`]: ./struct.PublicKey.html
 //! [`PublicKey::verify`]: ./struct.PublicKey.html#method.verify
+//! [`Nonce::generate_with_rng`]: ./struct.Nonce.html#method.generate_with_rng
+//! [`Signature`]: ./struct.Signature.html
+//!
+//! # `no_std` support
+//! To build for an embedded (aka `no_std`) environment, disable default features,
+//! enable `dalek` and optionally `b64`.
+//! For example:
+//! ```sh
+//! cargo build --no-default-features --features dalek,b64 --target thumbv7em-none-eabihf
+//! ```
 #![no_std]
 #![warn(missing_docs)]
 
@@ -92,9 +118,11 @@ pub use zerocopy::{AsBytes, FromBytes};
 
 #[cfg(all(test, any(feature = "sodium", feature = "dalek")))]
 mod tests {
+    #[allow(unused_imports)]
     use crate::{ephemeral::*, Keypair, PublicKey};
 
     #[test]
+    #[cfg(any(feature = "sodium", feature = "getrandom"))]
     fn shared_secret_with_zero() {
         let (c_eph_pk, _) = generate_ephemeral_keypair();
         let c_keys = Keypair::generate();
@@ -131,6 +159,7 @@ mod dalek_vs_sodium {
     use crate::Keypair;
 
     #[test]
+    #[cfg(any(feature = "sodium", feature = "getrandom"))]
     fn auth() {
         use crate::{ephemeral::*, NetworkKey};
 
@@ -181,6 +210,7 @@ mod dalek_vs_sodium {
     }
 
     #[test]
+    #[cfg(any(feature = "sodium", feature = "getrandom"))]
     fn sign() {
         let m = "hello this is a message".as_bytes();
         let kp = Keypair::generate();

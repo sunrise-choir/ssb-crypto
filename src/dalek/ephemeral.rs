@@ -4,11 +4,19 @@ use crate::{ephemeral::*, PublicKey, SecretKey};
 use curve25519_dalek::scalar::Scalar;
 use curve25519_dalek::{edwards::CompressedEdwardsY, montgomery::MontgomeryPoint};
 use ed25519_dalek as dalek;
-use rand::rngs::OsRng;
+use rand::{CryptoRng, RngCore};
 use x25519_dalek as x25519;
 
+#[cfg(feature = "getrandom")]
 pub fn generate_ephemeral_keypair() -> (EphPublicKey, EphSecretKey) {
-    let s = x25519::StaticSecret::new(&mut OsRng {});
+    generate_ephemeral_keypair_with_rng(&mut rand::rngs::OsRng {})
+}
+
+pub fn generate_ephemeral_keypair_with_rng<R>(r: &mut R) -> (EphPublicKey, EphSecretKey)
+where
+    R: CryptoRng + RngCore,
+{
+    let s = x25519::StaticSecret::new(r);
     let p = x25519::PublicKey::from(&s);
 
     (EphPublicKey(*p.as_bytes()), EphSecretKey(s.to_bytes()))

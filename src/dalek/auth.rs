@@ -1,4 +1,3 @@
-use crate::dalek::utils::random_bytes;
 use crate::utils::as_array_32;
 use crate::{NetworkAuth, NetworkKey};
 
@@ -20,10 +19,4 @@ pub fn verify(k: &NetworkKey, a: &NetworkAuth, m: &[u8]) -> bool {
     mac.update(m);
     let choice = mac.finalize().into_bytes()[..32].ct_eq(&a.0);
     choice.unwrap_u8() == 1
-}
-
-pub fn generate_key() -> NetworkKey {
-    let mut buf = [0; NetworkKey::SIZE];
-    random_bytes(&mut buf);
-    NetworkKey(buf)
 }

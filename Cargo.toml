@@ -17,23 +17,24 @@ zeroize = { version = "1.1.0", default_features = false, features = ["zeroize_de
 libsodium-sys = { version = "0.2.6", optional = true }
 sodiumoxide   = { version = "0.2.6", optional = true, default_features = false, features = ["std"] } # doesn't build on stable without "std"
 base64 = { version = "0.12.3", optional = true, default_features = false }
-ed25519-dalek = { version = "1.0.0-pre.4", optional = true, default_features = false, features = ["u64_backend", "rand"] }
-x25519-dalek = { version = "0.6.0", optional = true, default_features = false, features = ["u64_backend"] }
-curve25519-dalek = { version = "2.1.0", optional = true, default_features = false, features = ["u64_backend"] }
+ed25519-dalek = { version = "1.0.0", optional = true, default_features = false, features = ["u64_backend", "rand"] }
+x25519-dalek = { version = "1.1.0", optional = true, default_features = false, features = ["u64_backend"] }
+curve25519-dalek = { version = "3.0.0", optional = true, default_features = false, features = ["u64_backend"] }
 xsalsa20poly1305 = { version = "0.4.2", optional = true, default_features = false }
-rand = { version = "0.7.3", optional = true, default_features = false, features = ["getrandom"] }
+rand = { version = "0.7.3", optional = true, default_features = false }
 sha2 = { version = "0.9.1", optional = true, default_features = false }
-hmac = { version = "0.8.1", optional = true, default_features = false }
+hmac = { version = "0.9.0", optional = true, default_features = false }
 subtle = { version = "2.2.3", optional = true, default_features = false, features = ["i128"] }
 
 [features]
-default = ["dalek", "b64"]
+default = ["dalek", "b64", "getrandom"]
 dalek = ["dalek_module"]
 dalek_module = ["ed25519-dalek", "x25519-dalek", "curve25519-dalek", "xsalsa20poly1305", "rand", "sha2", "hmac", "subtle"]
 force_sodium = ["sodium"]
 sodium = ["sodium_module"]
 sodium_module = ["sodiumoxide", "libsodium-sys"]
 b64 = ["base64"]
+getrandom = ["rand", "rand/getrandom"]
 
 [dev-dependencies]
 hex = "0.4.2"

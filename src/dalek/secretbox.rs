@@ -1,4 +1,3 @@
-use crate::dalek::utils::random_bytes;
 use crate::secretbox::*;
 
 use xs::aead::{generic_array::GenericArray, AeadInPlace, NewAead};
@@ -29,16 +28,4 @@ pub fn seal(k: &Key, mut m: &mut [u8], n: &Nonce) -> Hmac {
         .encrypt_in_place_detached(nonce, &[], &mut m)
         .unwrap();
     Hmac(*h.as_ref())
-}
-
-pub fn generate_nonce() -> Nonce {
-    let mut buf = [0; Nonce::SIZE];
-    random_bytes(&mut buf);
-    Nonce(buf)
-}
-
-pub fn generate_key() -> Key {
-    let mut buf = [0; Key::SIZE];
-    random_bytes(&mut buf);
-    Key(buf)
 }

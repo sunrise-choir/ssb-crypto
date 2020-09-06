@@ -15,10 +15,13 @@ use crate::dalek::ephemeral as eph;
 use crate::sodium::ephemeral as eph;
 
 #[cfg(any(feature = "sodium", feature = "dalek"))]
-pub use eph::{
-    derive_shared_secret, derive_shared_secret_pk, derive_shared_secret_sk,
-    generate_ephemeral_keypair,
-};
+pub use eph::{derive_shared_secret, derive_shared_secret_pk, derive_shared_secret_sk};
+
+#[cfg(any(feature = "sodium", all(feature = "dalek", feature = "getrandom")))]
+pub use eph::generate_ephemeral_keypair;
+
+#[cfg(feature = "dalek")]
+pub use crate::dalek::ephemeral::generate_ephemeral_keypair_with_rng;
 
 /// The secret half of an ephemeral key pair; used for deriving a short-term shared secret for
 /// secure communication.

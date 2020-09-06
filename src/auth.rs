@@ -44,6 +44,18 @@ impl NetworkKey {
             None
         }
     }
+
+    /// Generate a random network key using the given cryptographically-secure
+    /// random number generator.
+    #[cfg(feature = "rand")]
+    pub fn generate_with_rng<R>(r: &mut R) -> NetworkKey
+    where
+        R: rand::CryptoRng + rand::RngCore,
+    {
+        let mut buf = [0; NetworkKey::SIZE];
+        r.fill_bytes(&mut buf);
+        NetworkKey(buf)
+    }
 }
 
 #[cfg(any(feature = "sodium", feature = "dalek"))]
@@ -52,11 +64,11 @@ impl NetworkKey {
     ///
     /// # Examples
     /// ```
-    /// use ssb_crypto::{NetworkKey, ephemeral::*};
-    /// let (pk, sk) = generate_ephemeral_keypair();
+    /// use ssb_crypto::NetworkKey;
     /// let netkey = NetworkKey::SSB_MAIN_NET;
-    /// let auth = netkey.authenticate(&pk.0);
-    /// assert!(netkey.verify(&auth, &pk.0));
+    /// let bytes = [1, 2, 3, 4];
+    /// let auth = netkey.authenticate(&bytes);
+    /// assert!(netkey.verify(&auth, &bytes));
     /// ```
     pub fn authenticate(&self, b: &[u8]) -> NetworkAuth {
         auth::authenticate(self, b)
@@ -77,8 +89,15 @@ impl NetworkKey {
     /// let key = NetworkKey::generate();
     /// assert_ne!(key, NetworkKey::SSB_MAIN_NET);
     /// ```
+    #[cfg(all(feature = "getrandom", not(feature = "sodium")))]
     pub fn generate() -> NetworkKey {
-        auth::generate_key()
+        NetworkKey::generate_with_rng(&mut rand::rngs::OsRng {})
+    }
+
+    #[allow(missing_docs)]
+    #[cfg(feature = "sodium")]
+    pub fn generate() -> NetworkKey {
+        crate::sodium::auth::generate_key()
     }
 }
 

@@ -34,15 +34,34 @@ impl Key {
             None
         }
     }
+
+    /// Generate a new random key using the given cryptographically-secure
+    /// random number generator.
+    #[cfg(feature = "rand")]
+    pub fn generate_with_rng<R>(r: &mut R) -> Key
+    where
+        R: rand::CryptoRng + rand::RngCore,
+    {
+        let mut buf = [0; Key::SIZE];
+        r.fill_bytes(&mut buf);
+        Key(buf)
+    }
+
+    /// Generate a new random key.
+    #[cfg(all(feature = "getrandom", not(feature = "sodium")))]
+    pub fn generate() -> Key {
+        Key::generate_with_rng(&mut rand::rngs::OsRng {})
+    }
+
+    #[allow(missing_docs)]
+    #[cfg(feature = "sodium")]
+    pub fn generate() -> Key {
+        crate::sodium::secretbox::generate_key()
+    }
 }
 
 #[cfg(any(feature = "sodium", feature = "dalek"))]
 impl Key {
-    /// Generate a new random key.
-    pub fn generate() -> Key {
-        sb::generate_key()
-    }
-
     /// Encrypt a message in place, returning the authentication code.
     pub fn seal(&self, msg: &mut [u8], n: &Nonce) -> Hmac {
         sb::seal(self, msg, n)
@@ -101,9 +120,27 @@ impl Nonce {
     }
 
     /// Generate a new, random nonce.
-    #[cfg(any(feature = "sodium", feature = "dalek"))]
+    #[cfg(all(feature = "getrandom", not(feature = "sodium")))]
     pub fn generate() -> Nonce {
-        sb::generate_nonce()
+        Nonce::generate_with_rng(&mut rand::rngs::OsRng {})
+    }
+
+    #[allow(missing_docs)]
+    #[cfg(feature = "sodium")]
+    pub fn generate() -> Nonce {
+        crate::sodium::secretbox::generate_nonce()
+    }
+
+    /// Generate a new, random nonce using the given cryptographically-secure
+    /// random number generator.
+    #[cfg(feature = "rand")]
+    pub fn generate_with_rng<R>(r: &mut R) -> Nonce
+    where
+        R: rand::CryptoRng + rand::RngCore,
+    {
+        let mut buf = [0; Nonce::SIZE];
+        r.fill_bytes(&mut buf);
+        Nonce(buf)
     }
 
     /// Deserialize a nonce from a byte slice.

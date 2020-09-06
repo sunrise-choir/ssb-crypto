@@ -3,4 +3,3 @@ pub mod ephemeral;
 pub mod hash;
 pub mod secretbox;
 pub mod sign;
-pub mod utils;
