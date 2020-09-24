@@ -27,7 +27,8 @@ hmac = { version = "0.9.0", optional = true, default_features = false }
 subtle = { version = "2.2.3", optional = true, default_features = false, features = ["i128"] }
 
 [features]
-default = ["dalek", "b64", "getrandom"]
+default = ["dalek", "b64", "getrandom", "alloc"]
+alloc = ["b64", "base64/alloc"]
 dalek = ["dalek_module"]
 dalek_module = ["ed25519-dalek", "x25519-dalek", "curve25519-dalek", "xsalsa20poly1305", "rand", "sha2", "hmac", "subtle"]
 force_sodium = ["sodium"]

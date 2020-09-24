@@ -87,6 +87,9 @@
 #![no_std]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
 #[cfg(test)]
 #[macro_use]
 extern crate std;
