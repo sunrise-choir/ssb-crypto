@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2020-09-25
+### Added
+- public `sk_to_curve` function (converts `SecretKey` to `EphSecretKey`)
+- `as_base64()` fns for Keypair, PublicKey, Signature, Hash
+- `NetworkKey::from_base64`
+- `Debug` trait impl for Keypair, SecretKey
+
 ## [0.2.0] - 2020-09-02
 ### Added
 - Dalek/RustCrypto implementation of crypto operations, in addition to sodiumoxide

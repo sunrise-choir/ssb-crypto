@@ -43,6 +43,19 @@ impl Hash {
             None
         }
     }
+
+    /// Does not include ".sha256" suffix or a sigil prefix.
+    ///
+    /// # Example
+    /// ```rust
+    /// let s = "4hUgS4j0TwKdsZzOV/tfqiPtqoLw2qYg/Wl9Xy8FPEU=";
+    /// let h = ssb_crypto::Hash::from_base64(s).unwrap();
+    /// assert_eq!(h.as_base64(), s);
+    /// ```
+    #[cfg(feature = "alloc")]
+    pub fn as_base64(&self) -> alloc::string::String {
+        base64::encode_config(&self.0[..], base64::STANDARD)
+    }
 }
 
 #[cfg(all(feature = "dalek", not(feature = "force_sodium")))]

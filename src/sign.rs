@@ -17,7 +17,7 @@ use crate::sodium::sign;
 /// A public/secret long-term key pair.
 ///
 /// This is an [Ed25519](https://en.wikipedia.org/wiki/EdDSA) key pair.
-#[derive(Clone, AsBytes, FromBytes)]
+#[derive(Clone, Debug, AsBytes, FromBytes)]
 #[repr(C)]
 pub struct Keypair {
     /// The secret half of the key pair. Keep private.
@@ -125,7 +125,7 @@ impl Keypair {
 /// The underlying memory is zeroed on drop.
 ///
 /// [`Keypair`]: ./struct.Keypair.html
-#[derive(AsBytes, FromBytes, Clone, Zeroize)]
+#[derive(Clone, Debug, AsBytes, FromBytes, Zeroize)]
 #[zeroize(drop)]
 #[repr(C)]
 pub struct SecretKey(pub [u8; 32]);

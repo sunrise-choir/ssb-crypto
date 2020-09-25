@@ -37,7 +37,11 @@
 //! use the `generate_with_rng()` functions instead.
 //!
 //! ### `b64`
-//! On by default. Enable `from_base64` functions for [`Keypair`], [`PublicKey`], [`Signature`], and [`Hash`].
+//! On by default. Enable `from_base64` functions for [`Keypair`], [`PublicKey`], [`Signature`], [`Hash`], and [`NetworkKey`].
+//! Also enabled by `alloc`.
+//!
+//! ### `alloc`
+//! On by default. Enable `as_base64() -> String` functions for [`Keypair`], [`PublicKey`], [`Signature`], and [`Hash`].
 //!
 //! ### `sodium`
 //! Use the libsodium/sodiumoxide implementation of the crypto operations.
@@ -72,6 +76,7 @@
 //! [`Hash`]: ./struct.Hash.html
 //! [`Keypair`]: ./struct.Keypair.html
 //! [`Keypair::sign`]: ./struct.Keypair.html#method.sign
+//! [`NetworkKey`]: ./struct.NetworkKey.html
 //! [`PublicKey`]: ./struct.PublicKey.html
 //! [`PublicKey::verify`]: ./struct.PublicKey.html#method.verify
 //! [`Nonce::generate_with_rng`]: ./struct.Nonce.html#method.generate_with_rng

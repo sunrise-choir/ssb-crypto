@@ -40,7 +40,7 @@ fn pk_to_curve(k: &PublicKey) -> Option<EphPublicKey> {
     }
 }
 
-fn sk_to_curve(k: &SecretKey) -> Option<EphSecretKey> {
+pub fn sk_to_curve(k: &SecretKey) -> Option<EphSecretKey> {
     let mut buf = [0; EphSecretKey::SIZE];
 
     let ok = unsafe { crypto_sign_ed25519_sk_to_curve25519(buf.as_mut_ptr(), k.0.as_ptr()) == 0 };

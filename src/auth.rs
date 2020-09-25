@@ -56,6 +56,17 @@ impl NetworkKey {
         r.fill_bytes(&mut buf);
         NetworkKey(buf)
     }
+
+    /// Deserialize from the base-64 representation.
+    #[cfg(feature = "b64")]
+    pub fn from_base64(s: &str) -> Option<Self> {
+        let mut buf = [0; Self::SIZE];
+        if crate::b64::decode(s, &mut buf, None) {
+            Some(Self(buf))
+        } else {
+            None
+        }
+    }
 }
 
 #[cfg(any(feature = "sodium", feature = "dalek"))]

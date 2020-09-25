@@ -49,3 +49,8 @@ pub fn derive_shared_secret_sk(sk: &SecretKey, pk: &EphPublicKey) -> Option<Shar
     let m = MontgomeryPoint(pk.0);
     Some(SharedSecret((s * m).to_bytes()))
 }
+
+pub fn sk_to_curve(sk: &SecretKey) -> Option<EphSecretKey> {
+    let exp = dalek::ExpandedSecretKey::from(&dalek::SecretKey::from_bytes(&sk.0).unwrap());
+    Some(EphSecretKey(as_array_32(&exp.to_bytes()[..32])))
+}
