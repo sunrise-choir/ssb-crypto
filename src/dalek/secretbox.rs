@@ -12,7 +12,7 @@ pub fn open(k: &Key, mut c: &mut [u8], hmac: &Hmac, n: &Nonce) -> bool {
     let cipher = XSalsa20Poly1305::new(key);
 
     cipher
-        .decrypt_in_place_detached(nonce, &[], &mut c, &tag)
+        .decrypt_in_place_detached(nonce, &[], &mut c, tag)
         .is_ok()
 }
 
