@@ -37,9 +37,9 @@ pub fn keypair_from_seed(seed: &[u8]) -> Option<Keypair> {
 
 pub fn sign(k: &Keypair, b: &[u8]) -> Signature {
     let s = sign::sign_detached(b, &k.into());
-    Signature(s.0)
+    Signature(s.to_bytes())
 }
 
 pub fn verify(k: &PublicKey, sig: &Signature, b: &[u8]) -> bool {
-    sign::verify_detached(&sign::Signature(sig.0), b, &sign::PublicKey(k.0))
+    sign::verify_detached(&sign::Signature::new(sig.0), b, &sign::PublicKey(k.0))
 }
