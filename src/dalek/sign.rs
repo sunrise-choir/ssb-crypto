@@ -34,7 +34,7 @@ where
 }
 
 pub fn keypair_from_seed(seed: &[u8]) -> Option<Keypair> {
-    let s = dalek::SecretKey::from_bytes(&seed).ok()?;
+    let s = dalek::SecretKey::from_bytes(seed).ok()?;
     let p = dalek::PublicKey::from(&s);
 
     Some(Keypair {

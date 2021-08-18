@@ -111,7 +111,7 @@ impl Keypair {
     /// Generate a signature for a given byte slice.
     #[cfg(any(feature = "sodium", feature = "dalek"))]
     pub fn sign(&self, b: &[u8]) -> Signature {
-        sign::sign(&self, b)
+        sign::sign(self, b)
     }
 }
 
